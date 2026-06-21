@@ -1,0 +1,6 @@
+.pio/
+.claude/
+.vscode/
+.DS_Store
+*.local
+secrets.yaml

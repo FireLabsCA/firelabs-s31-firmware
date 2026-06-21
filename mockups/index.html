@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<title>FireLabs S31 — web UI mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme:light dark;
+    --red:#FA2800;
+    --orange:#FFA01E;
+    --grad:linear-gradient(135deg,#FA2800 0%,#FF7A12 55%,#FFA01E 100%);
+    /* light theme (default) */
+    --ink:#1B1613;
+    --muted:#90847b;
+    --card:#ffffff;
+    --line:#efe4d9;
+    --line-strong:#e4d6c8;
+    --page:
+      radial-gradient(900px 500px at 88% -8%, #fff3e7 0%, transparent 60%),
+      radial-gradient(700px 400px at -8% 8%, #ffe9e2 0%, transparent 55%),
+      #FBF6F1;
+    --input-bg:#fffdfb;
+    --stat-grad:linear-gradient(180deg,#fffdfb,#fbf5ee);
+    --tab-on-bg:#1B1613; --tab-on-fg:#fff;
+    --seg-bg:#f4ece4; --seg-on-bg:#fff; --seg-on-fg:var(--ink);
+    --callout-bg:#fff7ee; --callout-bd:#ffe2bf; --callout-fg:#6b5a45;
+    --good:#28a86a; --good-bg:#e7f6ee;
+    --danger:#d63a1e; --danger-bd:#f0c9c0;
+    --track:#e3d7ca; --glyph-off:#f6efe8; --led-off:#cfc3b6;
+    --addr-bg:#1b1613; --addr-fg:#ffd9a8;
+    --shadow:0 1px 2px rgba(27,22,19,.04),0 8px 24px -12px rgba(27,22,19,.18);
+    --r:16px; --r-sm:11px;
+  }
+  /* dark theme: auto (system) unless a manual light override is set */
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]):not([data-theme="dark"]){
+      --ink:#f3ebe3; --muted:#9c8e82;
+      --card:#1d1916; --line:#2b2521; --line-strong:#39312b;
+      --page:
+        radial-gradient(900px 500px at 88% -8%, rgba(255,122,18,.13) 0%, transparent 60%),
+        radial-gradient(700px 400px at -8% 8%, rgba(250,40,0,.13) 0%, transparent 55%),
+        #141110;
+      --input-bg:#171310;
+      --stat-grad:linear-gradient(180deg,#221d19,#1a1613);
+      --tab-on-bg:var(--grad); --tab-on-fg:#fff;
+      --seg-bg:#241f1b; --seg-on-bg:#39312b; --seg-on-fg:var(--ink);
+      --callout-bg:rgba(255,160,30,.08); --callout-bd:rgba(255,160,30,.22); --callout-fg:#cdbba6;
+      --good:#36d484; --good-bg:rgba(54,212,132,.14);
+      --danger:#ff6a4d; --danger-bd:rgba(255,106,77,.35);
+      --track:#3a322c; --glyph-off:#2a241f; --led-off:#4a4038;
+      --addr-bg:#0e0c0a; --addr-fg:#ffd9a8;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 30px -16px rgba(0,0,0,.7);
+    }
+  }
+  /* manual dark override (dev toolbar) */
+  :root[data-theme="dark"]{
+    --ink:#f3ebe3; --muted:#9c8e82;
+    --card:#1d1916; --line:#2b2521; --line-strong:#39312b;
+    --page:
+      radial-gradient(900px 500px at 88% -8%, rgba(255,122,18,.13) 0%, transparent 60%),
+      radial-gradient(700px 400px at -8% 8%, rgba(250,40,0,.13) 0%, transparent 55%),
+      #141110;
+    --input-bg:#171310;
+    --stat-grad:linear-gradient(180deg,#221d19,#1a1613);
+    --tab-on-bg:var(--grad); --tab-on-fg:#fff;
+    --seg-bg:#241f1b; --seg-on-bg:#39312b; --seg-on-fg:var(--ink);
+    --callout-bg:rgba(255,160,30,.08); --callout-bd:rgba(255,160,30,.22); --callout-fg:#cdbba6;
+    --good:#36d484; --good-bg:rgba(54,212,132,.14);
+    --danger:#ff6a4d; --danger-bd:rgba(255,106,77,.35);
+    --track:#3a322c; --glyph-off:#2a241f; --led-off:#4a4038;
+    --addr-bg:#0e0c0a; --addr-fg:#ffd9a8;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 30px -16px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--page)}
+  body{
+    font-family:"Quicksand",system-ui,sans-serif;color:var(--ink);
+    min-height:100vh;-webkit-font-smoothing:antialiased;
+  }
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+
+  /* dev toolbar (not part of the product) */
+  .devbar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:9px 16px;background:rgba(20,17,16,.94);backdrop-filter:blur(6px);color:#f4ece4;font-size:12.5px}
+  .devbar b{font-weight:700;letter-spacing:.04em;color:#fff}
+  .devbar .hint{color:#bdaea3;opacity:.7}
+  .devbar .group{display:flex;gap:6px;align-items:center}
+  .devbar .group span{color:#8a7d72;font-size:11px}
+  .devbar .seg{display:flex;background:#2c2521;border-radius:9px;padding:3px}
+  .devbar .seg.left{margin-left:auto}
+  .devbar .seg button{font-family:inherit;font-size:12px;font-weight:600;color:#cdbfb4;border:0;background:transparent;padding:6px 12px;border-radius:7px;cursor:pointer}
+  .devbar .seg button.on{background:var(--grad);color:#fff}
+
+  .stage{max-width:560px;margin:26px auto 60px;padding:0 18px}
+
+  .pill{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;padding:5px 11px;border-radius:999px}
+  .pill.ok{background:var(--good-bg);color:var(--good)}
+  .dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 2.4s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(40,168,106,.45)}70%{box-shadow:0 0 0 7px rgba(40,168,106,0)}100%{box-shadow:0 0 0 0 rgba(40,168,106,0)}}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .card+.card{margin-top:16px}
+  .card .hd{padding:15px 18px 0;font-weight:700;font-size:15px}
+  .card .sub{padding:2px 18px 0;color:var(--muted);font-size:12.5px}
+  .card .bd{padding:16px 18px 18px}
+
+  label.fld{display:block;margin-top:14px;font-size:12.5px;font-weight:600;color:var(--muted)}
+  label.fld:first-child{margin-top:0}
+  input[type=text],input[type=password],input[type=number],select{
+    width:100%;margin-top:6px;font-family:inherit;font-size:14.5px;color:var(--ink);
+    padding:11px 12px;border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--input-bg);
+  }
+  input:focus,select:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,160,30,.2)}
+  .help{margin-top:6px;font-size:12px;color:var(--muted)}
+  .preview-host{font-family:"JetBrains Mono",monospace;color:var(--red);font-weight:500}
+
+  .btn{font-family:inherit;font-weight:700;font-size:14px;border:0;border-radius:var(--r-sm);padding:12px 18px;cursor:pointer}
+  .btn.primary{background:var(--grad);color:#fff;box-shadow:0 6px 16px -7px rgba(250,40,0,.7)}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line-strong)}
+  .btn.danger{background:var(--card);color:var(--danger);border:1px solid var(--danger-bd)}
+  .btn.block{width:100%}
+  .btn:active{transform:translateY(1px)}
+
+  .topbar{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .topbar img{width:56px;height:56px;flex:none}
+  .topbar .name{font-weight:700;font-size:19px;line-height:1}
+  .topbar .name small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);margin-top:4px;letter-spacing:.02em}
+  .topbar .pill{margin-left:auto}
+
+  .tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .tabs button{flex:1;font-family:inherit;font-weight:600;font-size:12.5px;color:var(--muted);border:0;background:transparent;padding:9px 4px;border-radius:9px;cursor:pointer}
+  .tabs button.on{background:var(--tab-on-bg);color:var(--tab-on-fg)}
+  .tab{display:none}
+  .tab.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .relay{display:flex;align-items:center;gap:18px;padding:20px 18px}
+  .relay .glyph{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;flex:none;background:var(--glyph-off);color:var(--muted);font-size:26px;transition:.3s}
+  .relay.on .glyph{background:var(--grad);color:#fff;box-shadow:0 8px 22px -8px rgba(250,40,0,.8)}
+  .relay .meta{flex:1}
+  .relay .meta .st{font-weight:700;font-size:20px}
+  .relay .meta .lbl{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .sw{width:64px;height:36px;border-radius:999px;background:var(--track);position:relative;cursor:pointer;transition:.28s;flex:none}
+  .sw::after{content:"";position:absolute;top:3px;left:3px;width:30px;height:30px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.2);transition:.28s}
+  .relay.on .sw{background:var(--grad)}
+  .relay.on .sw::after{left:31px}
+
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 18px 18px}
+  .stat{border:1px solid var(--line);border-radius:13px;padding:13px 14px;background:var(--stat-grad)}
+  .stat .v{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:23px;letter-spacing:-.01em}
+  .stat .v span{font-size:13px;color:var(--muted);font-weight:500;margin-left:3px}
+  .stat .k{font-size:11.5px;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:.07em}
+
+  .led-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+  .led-row:first-of-type{border-top:0}
+  .led{width:14px;height:14px;border-radius:50%;flex:none;background:#2b6cff;box-shadow:0 0 9px rgba(43,108,255,.75)}
+  .led.slow{animation:blink 2s steps(1) infinite}
+  .led.fast{animation:blink .34s steps(1) infinite}
+  .led.dim{opacity:.32}
+  .led.off{background:var(--led-off);box-shadow:none}
+  @keyframes blink{50%{opacity:.12}}
+  .led-row .t{font-weight:600;font-size:13.5px}
+  .led-row .d{color:var(--muted);font-size:12px}
+
+  .row{display:flex;align-items:center;gap:12px;padding:13px 0;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .row .grow{flex:1}
+  .row .k{font-weight:600;font-size:13.5px}
+  .row .s{color:var(--muted);font-size:12px;margin-top:2px}
+  .row .val{font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--muted)}
+
+  .seg2{display:flex;background:var(--seg-bg);border-radius:10px;padding:4px}
+  .seg2 button{flex:1;font-family:inherit;font-weight:600;font-size:12.5px;color:var(--muted);border:0;background:transparent;padding:8px;border-radius:7px;cursor:pointer}
+  .seg2 button.on{background:var(--seg-on-bg);color:var(--seg-on-fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+  .swmini{width:46px;height:27px;border-radius:999px;background:var(--track);position:relative;cursor:pointer;transition:.25s;flex:none}
+  .swmini::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:.25s}
+  .swmini.on{background:var(--grad)}
+  .swmini.on::after{left:22px}
+
+  input[type=range]{width:100%;accent-color:var(--orange);margin-top:10px}
+
+  .callout{background:var(--callout-bg);border:1px solid var(--callout-bd);border-radius:12px;padding:13px 15px;font-size:13px;color:var(--callout-fg);margin-bottom:14px}
+  .callout b{color:var(--ink)}
+  ol.steps{margin:0;padding-left:18px;font-size:13.5px;line-height:1.55;color:var(--muted)}
+  ol.steps li{margin:7px 0}
+  ol.steps b{color:var(--ink)}
+
+  .upload{border:1.5px dashed var(--line-strong);border-radius:12px;padding:18px;text-align:center;color:var(--muted);font-size:13px}
+
+  .wifi{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;margin-top:9px;cursor:pointer;background:var(--card);transition:.15s}
+  .wifi:hover{border-color:var(--orange)}
+  .wifi.sel{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,160,30,.18)}
+  .wifi .nm{flex:1;font-weight:600;font-size:14px}
+  .bars{display:flex;align-items:flex-end;gap:2px;height:16px}
+  .bars i{width:3px;background:var(--orange);border-radius:1px}
+  .bars i.x{background:var(--led-off)}
+
+  .wiz{max-width:430px;margin:34px auto 60px;padding:0 18px}
+  .wiz .lockup{text-align:center;margin-bottom:6px}
+  .wiz .lockup img{width:128px}
+  .wiz .lockup .wordmark{font-weight:700;font-size:30px;letter-spacing:.01em;color:var(--ink);margin-top:2px}
+  .stepper{display:flex;justify-content:center;gap:7px;margin:14px 0 20px}
+  .stepper i{width:8px;height:8px;border-radius:50%;background:var(--line-strong)}
+  .stepper i.on{background:var(--grad);width:22px}
+  .wstep{display:none}
+  .wstep.on{display:block;animation:fade .25s ease}
+  .wtitle{font-size:21px;font-weight:700;text-align:center}
+  .wsub{text-align:center;color:var(--muted);font-size:13.5px;margin:6px 0 18px}
+  .navrow{display:flex;gap:10px;margin-top:18px}
+  .navrow .btn{flex:1}
+  .done-ic{width:64px;height:64px;border-radius:50%;background:var(--good-bg);color:var(--good);display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
+  .addr{font-family:"JetBrains Mono",monospace;background:var(--addr-bg);color:var(--addr-fg);padding:11px 13px;border-radius:10px;text-align:center;font-size:13.5px;margin:12px 0;word-break:break-all}
+  .foot{text-align:center;color:var(--muted);opacity:.7;font-size:11.5px;margin-top:26px;letter-spacing:.03em}
+</style>
+</head>
+<body>
+
+<div class="devbar">
+  <b>FireLabs S31</b><span class="hint">web UI mockup — not wired up</span>
+  <div class="group" style="margin-left:auto"><span>Theme</span>
+    <div class="seg">
+      <button id="th-auto" class="on" onclick="setTheme('auto')">Auto</button>
+      <button id="th-light" onclick="setTheme('light')">Light</button>
+      <button id="th-dark" onclick="setTheme('dark')">Dark</button>
+    </div>
+  </div>
+  <div class="seg">
+    <button id="vw-wiz" onclick="setView('wiz')">Setup wizard</button>
+    <button id="vw-dev" class="on" onclick="setView('dev')">Device UI</button>
+  </div>
+</div>
+
+<!-- ============ DEVICE UI ============ -->
+<div class="stage" id="view-dev">
+  <div class="topbar">
+    <img src="assets/firelabs-mark.png" alt="FireLabs">
+    <div>
+      <div class="name">Living Room<small class="mono">fl-living-room.local · C4:5B:BE:E4:9D:80</small></div>
+    </div>
+    <span class="pill ok"><span class="dot"></span>Online</span>
+  </div>
+
+  <div class="tabs">
+    <button class="on" onclick="tab(this,'t-status')">Status</button>
+    <button onclick="tab(this,'t-mqtt')">MQTT</button>
+    <button onclick="tab(this,'t-set')">Settings</button>
+    <button onclick="tab(this,'t-cal')">Calibration</button>
+    <button onclick="tab(this,'t-sys')">System</button>
+  </div>
+
+  <!-- STATUS -->
+  <div class="tab on" id="t-status">
+    <div class="card">
+      <div class="relay on" id="relay" onclick="toggleRelay()">
+        <div class="glyph">⏻</div>
+        <div class="meta">
+          <div class="st" id="relay-st">Relay ON</div>
+          <div class="lbl">Tap to toggle · red LED tracks this</div>
+        </div>
+        <div class="sw"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="v">42.6<span>W</span></div><div class="k">Power</div></div>
+        <div class="stat"><div class="v">122.4<span>V</span></div><div class="k">Voltage</div></div>
+        <div class="stat"><div class="v">0.36<span>A</span></div><div class="k">Current</div></div>
+        <div class="stat"><div class="v">0.214<span>kWh</span></div><div class="k">Today</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="hd">Blue LED</div>
+      <div class="sub">What the single status LED is telling you</div>
+      <div class="bd" style="padding-top:8px">
+        <div class="led-row"><span class="led slow"></span><div class="grow"><div class="t">Setup mode</div><div class="d">Slow blink — broadcasting the setup AP</div></div></div>
+        <div class="led-row"><span class="led fast"></span><div class="grow"><div class="t">Connecting</div><div class="d">Fast blink — joining your wifi</div></div></div>
+        <div class="led-row"><span class="led dim"></span><div class="grow"><div class="t">No-load warning</div><div class="d">Solid dim — relay on but ~0 W (toggle in Settings)</div></div></div>
+        <div class="led-row"><span class="led off"></span><div class="grow"><div class="t">Normal</div><div class="d">Off — running fine</div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="bd" style="padding-top:16px">
+        <div class="row"><div class="grow"><div class="k">WiFi signal</div></div><div class="val">-51 dBm</div></div>
+        <div class="row"><div class="grow"><div class="k">Uptime</div></div><div class="val">3d 04:18:22</div></div>
+        <div class="row"><div class="grow"><div class="k">Firmware</div></div><div class="val">FireLabs 0.1.0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MQTT -->
+  <div class="tab" id="t-mqtt">
+    <div class="card">
+      <div class="hd">Broker</div>
+      <div class="sub">Plaintext on your LAN. Home Assistant picks the plug up by discovery.</div>
+      <div class="bd">
+        <label class="fld">Host<input type="text" value="10.0.1.10" class="mono"></label>
+        <div style="display:flex;gap:12px">
+          <label class="fld" style="flex:1">Port<input type="number" value="1883" class="mono"></label>
+          <label class="fld" style="flex:2">Discovery prefix<input type="text" value="homeassistant" class="mono"></label>
+        </div>
+        <label class="fld">Username<input type="text" value="firelabs"></label>
+        <label class="fld">Password<input type="password" value="••••••••"></label>
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <button class="btn ghost">Test connection</button>
+          <button class="btn primary" style="margin-left:auto">Save</button>
+        </div>
+        <div class="row" style="margin-top:14px"><span class="pill ok"><span class="dot"></span>Connected</span><div class="grow"></div><div class="val">firelabs/fl-living-room</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="tab" id="t-set">
+    <div class="card">
+      <div class="hd">Identity</div>
+      <div class="bd">
+        <label class="fld">Device name<input type="text" value="Living Room" oninput="hostPreview(this.value)"></label>
+        <div class="help">Network name will be <span class="preview-host" id="hostprev">fl-living-room</span> — the <b>fl-</b> prefix keeps it clear of other devices.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hd">Behavior</div>
+      <div class="bd">
+        <label class="fld" style="margin-bottom:8px">Relay state after power loss</label>
+        <div class="seg2">
+          <button onclick="seg(this)">Off</button>
+          <button onclick="seg(this)">On</button>
+          <button class="on" onclick="seg(this)">Last state</button>
+        </div>
+        <div class="row" style="margin-top:16px">
+          <div class="grow"><div class="k">No-load indicator</div><div class="s">Blue LED glows when the relay is on but nothing is drawing power</div></div>
+          <div class="swmini" onclick="this.classList.toggle('on')"></div>
+        </div>
+        <label class="fld" style="margin-top:16px">Indicator brightness
+          <input type="range" min="5" max="100" value="30" oninput="document.getElementById('bdot').style.opacity=this.value/100;document.getElementById('bval').textContent=this.value+'%'">
+        </label>
+        <div class="help" style="display:flex;align-items:center;gap:9px">
+          <span class="led" id="bdot" style="opacity:.3;animation:none"></span>preview · <span id="bval" class="mono">30%</span>
+        </div>
+        <button class="btn primary block" style="margin-top:18px">Save settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALIBRATION -->
+  <div class="tab" id="t-cal">
+    <div class="card">
+      <div class="hd">Power calibration</div>
+      <div class="sub">The CSE7766 ships uncalibrated. Calibrate once against a known load.</div>
+      <div class="bd">
+        <div class="callout"><b>You'll need</b> a plug-in power meter (Kill-A-Watt or similar) and a steady load such as an incandescent bulb or a space heater on a fixed setting.</div>
+        <ol class="steps">
+          <li>Plug the meter and the load into this outlet, relay <b>ON</b>.</li>
+          <li>Let the reading settle for ~30 seconds.</li>
+          <li>Type the meter's true watts below and hit Calibrate.</li>
+        </ol>
+        <div class="row" style="margin-top:14px"><div class="grow"><div class="k">Plug reads now</div></div><div class="val" style="font-size:15px">41.8 W · 122.4 V · 0.34 A</div></div>
+        <label class="fld">True power from your meter (W)<input type="number" placeholder="e.g. 60.0" class="mono"></label>
+        <button class="btn primary block" style="margin-top:16px">Calibrate</button>
+        <div class="help" style="text-align:center">Current factor: <span class="mono">1.000</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYSTEM -->
+  <div class="tab" id="t-sys">
+    <div class="card">
+      <div class="hd">Device</div>
+      <div class="bd" style="padding-top:14px">
+        <div class="row"><div class="grow"><div class="k">Firmware</div></div><div class="val">FireLabs 0.1.0</div></div>
+        <div class="row"><div class="grow"><div class="k">Flash</div></div><div class="val">4 MB (ZB25VQ32)</div></div>
+        <div class="row"><div class="grow"><div class="k">Free heap</div></div><div class="val">38.2 KB</div></div>
+        <div class="row"><div class="grow"><div class="k">MAC</div></div><div class="val">C4:5B:BE:E4:9D:80</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="hd">Firmware update</div>
+      <div class="bd">
+        <div class="upload">Drop a <span class="mono">.bin</span> here or <b style="color:var(--red)">browse</b></div>
+        <button class="btn ghost block" style="margin-top:12px">Upload &amp; flash</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="bd" style="padding-top:16px">
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" style="flex:1">Restart</button>
+          <button class="btn danger" style="flex:1">Factory reset</button>
+        </div>
+        <div class="help" style="text-align:center;margin-top:10px">Or hold the button on the plug for 5 seconds.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">FireLabs S31 · firmware web UI</div>
+</div>
+
+<!-- ============ SETUP WIZARD ============ -->
+<div class="wiz" id="view-wiz" style="display:none">
+  <div class="lockup"><img src="assets/firelabs-mark.png" alt="FireLabs"><div class="wordmark">FireLabs</div></div>
+  <div class="stepper"><i class="on"></i><i></i><i></i><i></i></div>
+
+  <div class="wstep on" id="w0">
+    <div class="wtitle">Let's set up your plug</div>
+    <div class="wsub">You're connected to <b>FireLabs S31 E49D80</b>. Three quick steps and it's on your network.</div>
+    <div class="card"><div class="bd" style="text-align:center;color:var(--muted);font-size:13px">This page opened because the plug is broadcasting its own setup network. Nothing's saved yet.</div></div>
+    <div class="navrow"><button class="btn primary block" onclick="wgo(1)">Start</button></div>
+  </div>
+
+  <div class="wstep" id="w1">
+    <div class="wtitle">Choose your WiFi</div>
+    <div class="wsub">Pick the 2.4 GHz network the plug should join.</div>
+    <div class="card"><div class="bd">
+      <div class="wifi sel" onclick="pickWifi(this)"><div class="nm">Home-WiFi</div><div class="bars"><i style="height:5px"></i><i style="height:9px"></i><i style="height:13px"></i><i style="height:16px"></i></div></div>
+      <div class="wifi" onclick="pickWifi(this)"><div class="nm">IoT-Network</div><div class="bars"><i style="height:5px"></i><i style="height:9px"></i><i style="height:13px"></i><i class="x" style="height:16px"></i></div></div>
+      <div class="wifi" onclick="pickWifi(this)"><div class="nm">NETGEAR-guest</div><div class="bars"><i style="height:5px"></i><i style="height:9px"></i><i class="x" style="height:13px"></i><i class="x" style="height:16px"></i></div></div>
+      <label class="fld">Password<input type="password" placeholder="WiFi password"></label>
+    </div></div>
+    <div class="navrow"><button class="btn ghost" onclick="wgo(0)">Back</button><button class="btn primary" onclick="wgo(2)">Next</button></div>
+  </div>
+
+  <div class="wstep" id="w2">
+    <div class="wtitle">Name this plug</div>
+    <div class="wsub">So you can find it later and label it in Home Assistant.</div>
+    <div class="card"><div class="bd">
+      <label class="fld">Device name<input type="text" value="Living Room" oninput="hostPreview2(this.value)"></label>
+      <div class="help">Find it on your network at <span class="preview-host" id="hostprev2">fl-living-room</span>.local</div>
+    </div></div>
+    <div class="navrow"><button class="btn ghost" onclick="wgo(1)">Back</button><button class="btn primary" onclick="wgo(3)">Save &amp; connect</button></div>
+  </div>
+
+  <div class="wstep" id="w3">
+    <div class="done-ic">✓</div>
+    <div class="wtitle">Connecting…</div>
+    <div class="wsub">The plug is joining <b>Home-WiFi</b> and will reboot. This network will drop in a moment.</div>
+    <div class="addr">http://fl-living-room.local</div>
+    <div class="card"><div class="bd" style="font-size:13px;color:var(--muted)">Open that address once it's back, or look for <span class="mono">fl-living-room</span> in your router. If it can't connect, it reopens this setup network so you can try again.</div></div>
+  </div>
+
+  <div class="foot">FireLabs S31 · first-time setup</div>
+</div>
+
+<script>
+  function setTheme(t){
+    if(t==='auto') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme',t);
+    ['auto','light','dark'].forEach(x=>document.getElementById('th-'+x).classList.toggle('on',x===t));
+  }
+  function setView(v){
+    document.getElementById('view-dev').style.display=v==='dev'?'':'none';
+    document.getElementById('view-wiz').style.display=v==='wiz'?'':'none';
+    document.getElementById('vw-dev').classList.toggle('on',v==='dev');
+    document.getElementById('vw-wiz').classList.toggle('on',v==='wiz');
+    window.scrollTo(0,0);
+  }
+  function tab(btn,id){
+    document.querySelectorAll('#view-dev .tabs button').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.querySelectorAll('#view-dev .tab').forEach(t=>t.classList.remove('on'));
+    document.getElementById(id).classList.add('on');
+  }
+  function toggleRelay(){
+    const r=document.getElementById('relay');r.classList.toggle('on');
+    document.getElementById('relay-st').textContent=r.classList.contains('on')?'Relay ON':'Relay OFF';
+  }
+  function seg(b){b.parentElement.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+  function host(v){return 'fl-'+(v.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'s31-e49d80')}
+  function hostPreview(v){document.getElementById('hostprev').textContent=host(v)}
+  function hostPreview2(v){document.getElementById('hostprev2').textContent=host(v)}
+  function wgo(n){
+    document.querySelectorAll('.wstep').forEach(s=>s.classList.remove('on'));
+    document.getElementById('w'+n).classList.add('on');
+    document.querySelectorAll('.stepper i').forEach((d,i)=>d.classList.toggle('on',i<=n));
+    window.scrollTo(0,0);
+  }
+  function pickWifi(el){document.querySelectorAll('.wifi').forEach(w=>w.classList.remove('sel'));el.classList.add('sel')}
+</script>
+</body>
+</html>
