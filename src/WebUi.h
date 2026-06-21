@@ -41,6 +41,7 @@ private:
   void handleOta();
 
   AsyncWebServer server_{80};
+  bool begun_ = false;   // server_.begin() is one-shot; re-begin swaps routes only
   Config* cfg_ = nullptr;
   Relay* relay_ = nullptr;
   Meter* meter_ = nullptr;

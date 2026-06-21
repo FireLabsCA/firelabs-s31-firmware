@@ -10,6 +10,8 @@ class Config;
 //   stored wifi             -> Connecting, then Online
 //   connect fails > 30s     -> fall back to SetupAp
 //   online link drops       -> back to Connecting
+//   provisioned, stuck in   -> reboot after 5 min to retry (outage may be over)
+//     SetupAp > 5 min
 class NetworkManager {
 public:
   enum class Mode : uint8_t { Boot, SetupAp, Connecting, Online };
@@ -31,6 +33,11 @@ public:
   void onSetup(Callback cb)  { onSetup_ = cb; }    // entered AP setup mode
 
   static const uint32_t kConnectTimeout = 30000;
+  // A provisioned plug that fell back to setup because wifi was unreachable
+  // shouldn't camp there forever; the outage may clear while it sits blind.
+  // Reboot after this window to retry joining. A never-provisioned plug (no
+  // creds) ignores this and stays in setup, since a human still has to set it up.
+  static const uint32_t kSetupFallbackTimeout = 5UL * 60 * 1000;
 
 private:
   void startConnecting();
@@ -39,6 +46,7 @@ private:
   Config* cfg_ = nullptr;
   Mode mode_ = Mode::Boot;
   uint32_t connectStart_ = 0;
+  uint32_t apStart_ = 0;
   DNSServer dns_;
   bool dnsActive_ = false;
   bool scanning_ = false;
