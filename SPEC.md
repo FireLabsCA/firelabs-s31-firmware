@@ -1,8 +1,9 @@
 # FireLabs S31 Firmware Spec
 
-Custom firmware for the Sonoff S31 smart plug. Replaces the ESPHome build with
-an MQTT-native firmware that talks to Home Assistant through MQTT Discovery, and
-carries its own web UI for setup and configuration.
+Custom firmware for the Sonoff S31 smart plug. Replaces the stock Sonoff firmware
+(or ESPHome, if you flashed that on yourself) with an MQTT-native firmware that
+talks to Home Assistant through MQTT Discovery, and carries its own web UI for
+setup and configuration.
 
 Author: FireBall1725
 
