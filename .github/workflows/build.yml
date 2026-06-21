@@ -37,7 +37,10 @@ jobs:
       - name: Stage binary
         run: |
           mkdir -p dist
-          cp .pio/build/s31/firmware.bin "dist/firelabs-s31-${GITHUB_REF_NAME}.bin"
+          # GITHUB_REF_NAME is "<pr>/merge" on pull_request; the slash would be
+          # read as a directory. Flatten it so the cp target is a plain filename.
+          ref="${GITHUB_REF_NAME//\//-}"
+          cp .pio/build/s31/firmware.bin "dist/firelabs-s31-${ref}.bin"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
