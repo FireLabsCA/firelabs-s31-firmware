@@ -12,10 +12,14 @@ void WebUi::begin(bool setupMode, Config* cfg, Relay* relay, Meter* meter) {
   cfg_ = cfg;
   relay_ = relay;
   meter_ = meter;
+  // Re-begin (setup -> online after an in-place wifi retry, no reboot) must not
+  // stack a second set of handlers on top of the captive-portal routes. reset()
+  // drops the old handlers so we register exactly one face.
+  if (begun_) server_.reset();
   routesCommon();
   if (setupMode) routesSetup();
   else routesOnline();
-  server_.begin();
+  if (!begun_) { server_.begin(); begun_ = true; }
 }
 
 void WebUi::routesCommon() {

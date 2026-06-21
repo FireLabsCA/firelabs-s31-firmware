@@ -15,13 +15,15 @@ void NetworkManager::begin(Config* cfg) {
 void NetworkManager::startConnecting() {
   mode_ = Mode::Connecting;
   connectStart_ = millis();
-  dnsActive_ = false;
+  if (dnsActive_) { dns_.stop(); dnsActive_ = false; }  // tear down portal if retrying
+  WiFi.softAPdisconnect(true);                          // drop the AP, station only
   WiFi.mode(WIFI_STA);
   WiFi.begin(cfg_->wifiSsid.c_str(), cfg_->wifiPass.c_str());
 }
 
 void NetworkManager::startAp() {
   mode_ = Mode::SetupAp;
+  apStart_ = millis();
 
   // Scan FIRST, in plain station mode with no AP up. A scan makes the ESP8266
   // radio hop channels, which drops any SoftAP client, so we must never scan
@@ -68,6 +70,17 @@ void NetworkManager::loop() {
   switch (mode_) {
     case Mode::SetupAp:
       if (dnsActive_) dns_.processNextRequest();
+      // Fallback recovery: a provisioned plug only lands here because wifi was
+      // unreachable. Don't camp blind forever; retry the join once the window
+      // passes (the router/outage may have come back). We re-enter Connecting
+      // rather than reboot so the relay GPIO never drops and the load doesn't
+      // flicker. A fresh, never-provisioned plug has no creds, so it stays put
+      // for a human to set up.
+      if (cfg_->hasWifi() && millis() - apStart_ >= kSetupFallbackTimeout) {
+        DBG("ap: provisioned + stuck %lus, retrying wifi",
+            (unsigned long)(kSetupFallbackTimeout / 1000));
+        startConnecting();
+      }
       break;
 
     case Mode::Connecting:
