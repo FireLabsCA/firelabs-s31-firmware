@@ -9,9 +9,9 @@ Author: FireBall1725
 ## Goal
 
 Move off ESPHome's native API onto MQTT, keep a small web UI for provisioning and
-config, and own the firmware so it can be extended later. A custom HACS
-integration stays out of scope for the first cut; MQTT Discovery gives native HA
-entities without one.
+config, and own the firmware so it can be extended later. MQTT Discovery gives
+native HA entities out of the box; a companion HACS integration (see below) covers
+setups that don't run MQTT.
 
 ## Hardware
 
@@ -209,8 +209,10 @@ ballpark before calibration.
 - Indicator brightness default ~30%. Tune after seeing it on the wall.
 - MQTT discovery prefix default `homeassistant`. Configurable on the MQTT tab.
 
-## Later, out of scope for the first cut
+## Companion Home Assistant integration
 
-- Custom HACS integration. Only worth it if device management needs UI that
-  Discovery can't express (firmware push, calibration screens inside HA). MQTT
-  Discovery covers the native entities without it.
+Built and published at [FireLabsCA/firelabs-hass](https://github.com/FireLabsCA/firelabs-hass):
+a local-polling HACS integration that drives HA entities over the device HTTP API,
+for setups that don't run MQTT. It also provides zeroconf auto-discovery via the
+`_firelabs._tcp` mDNS service the firmware advertises. Use MQTT Discovery or the
+integration, not both, to avoid duplicate entities.

@@ -1,0 +1,6 @@
+# Headers here are C++, not C. GitHub's Linguist defaults .h to C, which
+# mislabels the project; this forces the correct language.
+*.h linguist-language=C++
+
+# Generated blob (PROGMEM byte array from the logo PNG); keep it out of stats.
+src/LogoPng.h linguist-generated=true

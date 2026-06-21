@@ -11,7 +11,7 @@ static const char SETUP_HTML[] PROGMEM = R"=====(<!DOCTYPE html>
 :root{color-scheme:light dark;--red:#FA2800;--orange:#FFA01E;--grad:linear-gradient(135deg,#FA2800,#FF7A12 55%,#FFA01E);
 --ink:#1B1613;--muted:#90847b;--card:#fff;--line:#efe4d9;--ls:#e4d6c8;--page:#FBF6F1;--inp:#fffdfb;--good:#28a86a;--goodbg:#e7f6ee;--addr:#1b1613;--addrfg:#ffd9a8}
 @media(prefers-color-scheme:dark){:root{--ink:#f3ebe3;--muted:#9c8e82;--card:#1d1916;--line:#2b2521;--ls:#39312b;--page:#141110;--inp:#171310;--good:#36d484;--goodbg:rgba(54,212,132,.14);--addr:#0e0c0a}}
-*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:"Quicksand",system-ui,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}html,body{overflow-x:hidden}body{margin:0;overflow-wrap:anywhere;background:var(--page);color:var(--ink);font-family:"Quicksand",system-ui,Segoe UI,sans-serif;-webkit-font-smoothing:antialiased}
 .mono{font-family:"JetBrains Mono",ui-monospace,monospace}
 .wrap{max-width:430px;margin:34px auto 60px;padding:0 18px}
 .lock{text-align:center;margin-bottom:6px}.lock img{width:120px}.lock .wm{font-weight:700;font-size:28px;margin-top:2px}
@@ -27,7 +27,7 @@ input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(25
 .btn.p{background:var(--grad);color:#fff;box-shadow:0 6px 16px -7px rgba(250,40,0,.7)}.btn.g{background:var(--card);color:var(--ink);border:1px solid var(--ls)}.blk{width:100%}
 .nav{display:flex;gap:10px;margin-top:18px}.nav .btn{flex:1}
 .wifi{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:12px;margin-top:9px;cursor:pointer;background:var(--card)}
-.wifi.sel{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,160,30,.18)}.wifi .nm{flex:1;font-weight:600;font-size:14px}.wifi .lk{font-size:11px;color:var(--muted)}
+.wifi.sel{border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,160,30,.18)}.wifi .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:14px}.wifi .lk{flex:none;font-size:11px;color:var(--muted)}
 .done{width:64px;height:64px;border-radius:50%;background:var(--goodbg);color:var(--good);display:grid;place-items:center;font-size:30px;margin:0 auto 14px}
 .addr{font-family:"JetBrains Mono",monospace;background:var(--addr);color:var(--addrfg);padding:11px 13px;border-radius:10px;text-align:center;font-size:13.5px;margin:12px 0;word-break:break-all}
 .foot{text-align:center;color:var(--muted);opacity:.7;font-size:11.5px;margin-top:26px}

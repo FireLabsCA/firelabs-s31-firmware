@@ -1,6 +1,6 @@
 # FireLabs S31 firmware
 
-Custom firmware for the Sonoff S31 smart plug (ESP8266, 4MB). It replaces the stock ESPHome build with an MQTT-native firmware that talks to Home Assistant through MQTT Discovery, plus a local HTTP API and a web UI for setup and configuration. It also works on the S31 Lite (no power-metering chip), detecting the missing CSE7766 at runtime and hiding the power features.
+Custom firmware for the Sonoff S31 smart plug (ESP8266, 4MB). It replaces whatever firmware is on the plug (stock Sonoff, or ESPHome if you flashed that yourself) with an MQTT-native firmware that talks to Home Assistant through MQTT Discovery, plus a local HTTP API and a web UI for setup and configuration. It also works on the S31 Lite (no power-metering chip), detecting the missing CSE7766 at runtime and hiding the power features.
 
 A companion Home Assistant integration (no MQTT required) lives at [FireLabsCA/firelabs-hass](https://github.com/FireLabsCA/firelabs-hass).
 
@@ -30,7 +30,7 @@ There is a second environment, `s31_diag`, that disables the meter and turns UAR
 
 ## Flash
 
-The first flash on a plug running ESPHome has to go over serial (ESPHome's OTA rejects a non-ESPHome image):
+The first flash has to go over serial; neither the stock Sonoff firmware nor ESPHome will accept this image through its own OTA:
 
 ```
 pio run -e s31 -t upload --upload-port /dev/cu.usbserial-XXXX
